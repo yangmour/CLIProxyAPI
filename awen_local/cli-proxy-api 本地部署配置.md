@@ -77,3 +77,25 @@ http://localhost:8317/management.html
 
 ## 账号
 4.搭配chatgpt_register.py使用
+
+
+## claude code的配置文件
+
+vim ~/.claude/settings.json
+```shell
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8317",
+    "ANTHROPIC_AUTH_TOKEN": "sk-cpa-lgkbqadxc14n59flqdsvzcbah4l5mc2v",
+    "ANTHROPIC_MODEL": "gpt-5.2-codex",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gpt-5.2-codex",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "gpt-5.2-codex",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "gpt-5.2-codex",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  }
+}
+```
