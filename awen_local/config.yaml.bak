@@ -1,0 +1,42 @@
+
+# CPA 配置 — Cloudflare Tunnel 方案
+
+# host 必须设为 127.0.0.1！
+
+# host 模式下绑定 localhost，配合 UFW 防止外部直连
+
+host: "0.0.0.0"
+
+port: 8317
+
+auth-dir: "~/.cli-proxy-api"
+
+request-retry: 3
+
+quota-exceeded:
+
+switch-project: true
+
+switch-preview-model: true
+
+# 按预定规则生成高强度随机key
+
+api-keys:
+
+- "sk-cpa-$(tr -dc 'a-z0-9' </dev/urandom | head -c 32)"
+
+remote-management:
+
+allow-remote: true
+
+# 按预定规则生成高强度随机key
+
+secret-key: "mgt-cpa-$(tr -dc 'a-z0-9' </dev/urandom | head -c 32)"
+
+disable-control-panel: false
+
+logging-to-file: true
+
+usage-statistics-enabled: true
+
+logs-max-total-size-mb: 100

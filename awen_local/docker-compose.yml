@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  cli-proxy-api:
+    image: eceasy/cli-proxy-api:latest
+    container_name: cli-proxy-api
+
+    # 如果你在 Linux，可保留 host 模式
+    # network_mode: host
+
+    # Mac / Windows 推荐使用端口映射
+    ports:
+      - "8317:8317"
+
+    volumes:
+      - ./config.yaml:/CLIProxyAPI/config.yaml:ro
+      - ./auths:/root/.cli-proxy-api:rw
+      - ./logs:/CLIProxyAPI/logs:rw
+
+    restart: unless-stopped
