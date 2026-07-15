@@ -3,6 +3,9 @@ package gemini
 import (
 	"context"
 	"testing"
+
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/util"
+	"github.com/tidwall/gjson"
 )
 
 func TestRestoreUsageMetadata(t *testing.T) {
@@ -59,10 +62,23 @@ func TestConvertAntigravityResponseToGeminiNonStream(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := ConvertAntigravityResponseToGeminiNonStream(context.Background(), "", nil, nil, tt.input, nil)
-			if result != tt.expected {
-				t.Errorf("ConvertAntigravityResponseToGeminiNonStream() = %s, want %s", result, tt.expected)
+			if string(result) != tt.expected {
+				t.Errorf("ConvertAntigravityResponseToGeminiNonStream() = %s, want %s", string(result), tt.expected)
 			}
 		})
+	}
+}
+
+func TestConvertAntigravityResponseToGeminiNonStreamRestoresDisambiguatedName(t *testing.T) {
+	first := "mcp__plugin_cloudflare_cloudflare-builds__workers_builds_get_build"
+	second := "mcp__plugin_cloudflare_cloudflare-builds__workers_builds_get_build_logs"
+	original := []byte(`{"tools":[{"functionDeclarations":[{"name":"` + first + `"},{"name":"` + second + `"}]}]}`)
+	mapped := util.SanitizedFunctionNameMap(original)[second]
+	raw := []byte(`{"response":{"candidates":[{"content":{"parts":[{"functionCall":{"name":"` + mapped + `","args":{}}}]}}]}}`)
+
+	out := ConvertAntigravityResponseToGeminiNonStream(context.Background(), "", original, nil, raw, nil)
+	if got := gjson.GetBytes(out, "candidates.0.content.parts.0.functionCall.name").String(); got != second {
+		t.Fatalf("functionCall.name = %q, want %q. Output: %s", got, second, out)
 	}
 }
 
@@ -87,8 +103,8 @@ func TestConvertAntigravityResponseToGeminiStream(t *testing.T) {
 			if len(results) != 1 {
 				t.Fatalf("expected 1 result, got %d", len(results))
 			}
-			if results[0] != tt.expected {
-				t.Errorf("ConvertAntigravityResponseToGemini() = %s, want %s", results[0], tt.expected)
+			if string(results[0]) != tt.expected {
+				t.Errorf("ConvertAntigravityResponseToGemini() = %s, want %s", string(results[0]), tt.expected)
 			}
 		})
 	}
